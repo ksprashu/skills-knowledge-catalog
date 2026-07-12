@@ -1,5 +1,7 @@
 # Google Open Knowledge Format (OKF) - Knowledge Catalog Skill
 
+[![npx skills](https://img.shields.io/badge/skills.sh-installed-brightgreen)](https://skills.sh)
+
 This standalone repository contains the authoritative custom skill definitions, schemas, and progressive disclosure standards for managing a **Google Open Knowledge Format (OKF)** Knowledge Bundle in any software project workspace.
 
 ---
@@ -9,6 +11,16 @@ This standalone repository contains the authoritative custom skill definitions, 
 *   `SKILL.md`: The complete custom skill instructions defining the OKF directory trees, YAML frontmatter schemas, index-rebuilding schemas, and active traversal rules.
 *   `.gitignore`: Repository ignore-lists.
 *   `LICENSE`: MIT open source license.
+
+---
+
+## 🚀 Installation
+
+Install this skill into your agent environment using `npx skills`:
+
+```bash
+npx skills add ksprashu/skills-knowledge-catalog
+```
 
 ---
 
