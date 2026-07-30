@@ -2,7 +2,6 @@
 name: knowledge-catalog
 description: Enables the creation, maintenance, and traversal of a Google Open Knowledge Format (OKF) Bundle. Use this skill when asked to catalog a project, document codebase concepts (APIs, tables, runbooks), update an existing OKF directory, or progressively retrieve context.
 ---
-
 # Google Open Knowledge Format (OKF) Knowledge Catalog Skill
 
 You are now operating under the **Knowledge Catalog** custom skill, specializing in Google's **Open Knowledge Format (OKF)**. Your mandate is to maintain, traverse, and dynamically construct a self-describing, human-readable, and machine-traversable **Knowledge Bundle** under `.gemini/knowledge/` (or the project root) to solve the context-assembly problem for developers and AI agents.
@@ -55,38 +54,32 @@ Markdown body text...
 
 ---
 
-## ⚡ 3. Core Capabilities & Procedures
+## 🛠️ 3. Deterministic Static Verifier (`verify_okf.py`)
 
-When called upon to initialize, update, or traverse a codebase's Knowledge Catalog, perform the following protocols:
+This skill includes a native, machine-verifiable static check script at `scripts/verify_okf.py` to validate concept file structure:
 
-### A. Progressive Disclosure & Context Retrieval (The "RAG" Loop)
-To avoid prompt-token bloat, never ingest entire documentation logs at once.
-1.  **Read Index**: Check for `.gemini/knowledge/index.md` first.
-2.  **Filter Concepts**: Identify relevant Concept IDs based on the active task goals.
-3.  **Hydrate Context**: Run `view_file` only on those target documents, progressively loading details into memory.
-
-### B. Dynamic Index Rebuilding (`index.md`)
-The `index.md` file acts as the primary table of contents. Whenever a Concept Document is added, modified, or removed, you MUST programmatically regenerate `index.md` into a structured, responsive markdown table:
-
-| Concept ID | Type | Title | Description | Tags |
-|------------|------|-------|-------------|------|
-| `scout/codebase_map` | `Reference` | Codebase Map | Detailed folder and dependency map | `scout`, `setup` |
-| `analyst/user_decisions` | `Decision` | Confirmed Decisions | Confirmed tech stack and HSL palette choices | `analyst`, `decisions` |
-
-### C. Change-Driven Knowledge Logging (`log.md`)
-Keep a chronological history of significant alterations to the knowledge base to ensure complete reproducibility and history tracking.
-```markdown
-# Knowledge Catalog Changelog
-
-## [2026-07-12T12:45:00Z] - Added AlloyDB Schema Spec
-- Created `architecture/db_schema_alloydb.md` to document DB cluster tables.
-- Linked schema in `index.md`.
+```bash
+python3 skills/knowledge-catalog/scripts/verify_okf.py .gemini/knowledge/scout/codebase_map.md
 ```
+
+The script verifies:
+1. YAML frontmatter opening (`---`) and closing markers.
+2. Required keys (`type`, `title`).
+3. Absence of placeholders (`TBD`, `TODO`, `FIXME`).
 
 ---
 
-## 🚦 4. Guidelines for Prompt Writers & Developers
+## ⚡ 4. Selective Context Grounding (On-Demand RAG)
+
+To prevent prompt-token bloat, never ingest entire documentation logs at once. Follow the **[Selective Grounding Specification](file:///Users/ksprashanth/code/github/skills-knowledge-catalog/skills/knowledge-catalog/references/selective_grounding.md)**:
+1.  **Read Index**: Check `.gemini/knowledge/index.md` first.
+2.  **Filter Concepts**: Identify relevant Concept IDs based on active task goals.
+3.  **Hydrate Context**: Run `view_file` only on target documents.
+
+---
+
+## 🚦 5. Guidelines for Prompt Writers & Developers
 
 *   **Zero Placeholders**: Concepts must be fully written out. Do not write "TBD", "To be completed later", or empty files.
-*   **VCS Integrity**: Ensure that the `.gemini/knowledge/` folder is committed to git. This binds the conceptual "why" of the application directly to the "how" in code.
-*   **Tag & Link Consistency**: Concepts can reference other concepts using standard Markdown links (e.g., `[API Spec](file:///.gemini/knowledge/architecture/api_endpoint.md)`). Verify that links are fully intact before completing a turn.
+*   **VCS Integrity**: Ensure that `.gemini/knowledge/` is committed to git to bind conceptual "why" directly to "how" in code.
+*   **Tag & Link Consistency**: Concepts can reference other concepts using standard Markdown links (e.g., `[API Spec](file:///.gemini/knowledge/architecture/api_endpoint.md)`).
